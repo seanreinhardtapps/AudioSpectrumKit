@@ -29,7 +29,7 @@ public class AudioSpectrumKit: NSObject, AudioSamplingInstanceDelegate {
     internal var audioSession: AVAudioSession
     
     internal var samplingInstance: SamplingInstance?
-    public binCount: BinCount?
+    public var binCount: BinCount?
     public init(delegate: AudioSpectrumKitResultsDelegate? = nil,
                 audioSession: AVAudioSession = AVAudioSession.sharedInstance(),
                 bundle:Bundle = Bundle.main) {
