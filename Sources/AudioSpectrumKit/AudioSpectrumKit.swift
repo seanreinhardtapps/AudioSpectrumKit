@@ -88,7 +88,7 @@ public class AudioSpectrumKit: NSObject, AudioSamplingInstanceDelegate {
         if let binCount = binCount {
             let binnedResponse = result.toAveragedResponse(binCount: binCount.rawValue)
             DispatchQueue.main.async { [weak self] in
-                self?.frequencyResponse = result
+                self?.frequencyResponse = binnedResponse
                 self?.delegate?.didReceiveSample(frequencyResponse: binnedResponse)
             }
             return
