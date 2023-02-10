@@ -16,6 +16,11 @@ public protocol AudioSpectrumKitResultsDelegate: NSObject {
     func samplingFailedToSetup(error:Error)
 }
 
+public enum BinCount:Int {
+    case twenty = 20
+    case thirty = 30
+    case fourty = 40
+}
 public class AudioSpectrumKit: NSObject, AudioSamplingInstanceDelegate {
     
     @Published private var frequencyResponse:FrequencyResponse = FrequencyResponse(response: [])
@@ -24,6 +29,7 @@ public class AudioSpectrumKit: NSObject, AudioSamplingInstanceDelegate {
     internal var audioSession: AVAudioSession
     
     internal var samplingInstance: SamplingInstance?
+    public binCount: BinCount?
     public init(delegate: AudioSpectrumKitResultsDelegate? = nil,
                 audioSession: AVAudioSession = AVAudioSession.sharedInstance(),
                 bundle:Bundle = Bundle.main) {
@@ -79,6 +85,14 @@ public class AudioSpectrumKit: NSObject, AudioSamplingInstanceDelegate {
     }
     
     func sampleProcessed(result: FrequencyResponse) {
+        if let binCount = binCount {
+            let binnedResponse = result.toAveragedResponse(binCount: binCount.rawValue)
+            DispatchQueue.main.async { [weak self] in
+                self?.frequencyResponse = result
+                self?.delegate?.didReceiveSample(frequencyResponse: binnedResponse)
+            }
+            return
+        }
         DispatchQueue.main.async { [weak self] in
             self?.frequencyResponse = result
             self?.delegate?.didReceiveSample(frequencyResponse: result)

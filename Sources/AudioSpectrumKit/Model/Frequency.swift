@@ -12,13 +12,23 @@ public struct Frequency: Codable, Identifiable {
     public var hz: Float
     public var db: Float
     
+    init(db:Float, freqHz:Float) {
+        self.db = db
+        self.hz = freqHz
+        self.id = Frequency.makeId(hz: freqHz)
+    }
+    
     init(index:Int, db:Float, bucketSize:Double) {
         self.db = db
-        self.hz = Float(Double(index) * bucketSize)
-        if db > 1000 {
-            self.id = String(format: "%.1fkHz", (self.hz / 1000))
-        } else {
-            self.id = String(format: "%.1fHz", self.hz)
+        let freqHz = Float(Double(index) * bucketSize)
+        self.hz = freqHz
+        self.id = Frequency.makeId(hz: freqHz)
+    }
+    
+    static func makeId(hz:Float) -> String {
+        if hz > 1000 {
+            return String(format: "%.1fkHz", (hz / 1000))
         }
+        return String(format: "%.1fHz", hz)
     }
 }
